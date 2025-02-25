@@ -36,8 +36,10 @@ let assets = {
     background: "assets/Tileset/spr_tileset_sunnysideworld_16px.png",
     playerIdle: "assets/Characters/Human/IDLE/base_idle_strip9.png",
     playerWalk: "assets/Characters/Human/WALKING/base_walk_strip8.png",
+    playerRun: "assets/Characters/Human/RUN/base_run_strip8.png",
     playerHatBowlhairIdle: "assets/Characters/Human/IDLE/bowlhair_idle_strip9.png",
     playerHatBowlhairWalk: "assets/Characters/Human/WALKING/bowlhair_walk_strip8.png",
+    playerHatBowlhairRun: "assets/Characters/Human/RUN/bowlhair_run_strip8.png",
 }
 
 let loadedAssets = 0;
@@ -141,9 +143,11 @@ kd.D.up(()=>{
 })
 
 
+
 kd.run(()=>{
     kd.tick();
 })
+
 
 
 // Objects
@@ -202,6 +206,28 @@ function Player(name, x, y, facing="right", scale=4, speed=3, hat){
                 } else {
                     ctx.drawImage(images.playerWalk, (images.playerWalk.width/(frames+1))*frameIndex, 0, images.playerWalk.width/(frames+1), images.playerWalk.height, player.x, player.y, images.playerWalk.width/(frames+1)*player.scale, images.playerWalk.height*player.scale);
                     ctx.drawImage(images.playerHatBowlhairWalk, (images.playerHatBowlhairWalk.width/(frames+1))*frameIndex, 0, images.playerHatBowlhairWalk.width/(frames+1), images.playerHatBowlhairWalk.height, player.x, player.y, images.playerHatBowlhairWalk.width/(frames+1)*player.scale, images.playerHatBowlhairWalk.height*player.scale);
+                }
+            
+
+                break;
+            case "run":
+                interval = 5;
+                frames = 7; // Count from 0
+
+                if(this.animFrame >= interval*frames){
+                    this.animFrame = 0;
+                } else {
+                    this.animFrame++;   
+                }
+            
+                frameIndex = Math.floor(this.animFrame/interval);
+
+                if(this.facing === "right"){
+                    ctx.drawImage(images.playerRun, (images.playerRun.width/(frames+1))*frameIndex, 0, images.playerRun.width/(frames+1), images.playerRun.height, player.x, player.y, images.playerRun.width/(frames+1)*player.scale, images.playerRun.height*player.scale);
+                    ctx.drawImage(images.playerHatBowlhairRun, (images.playerHatBowlhairRun.width/(frames+1))*frameIndex, 0, images.playerHatBowlhairRun.width/(frames+1), images.playerHatBowlhairRun.height, player.x, player.y, images.playerHatBowlhairRun.width/(frames+1)*player.scale, images.playerHatBowlhairRun.height*player.scale);
+                } else {
+                    ctx.drawImage(images.playerRun, (images.playerRun.width/(frames+1))*frameIndex, 0, images.playerRun.width/(frames+1), images.playerRun.height, player.x, player.y, images.playerRun.width/(frames+1)*player.scale, images.playerRun.height*player.scale);
+                    ctx.drawImage(images.playerHatBowlhairRun, (images.playerHatBowlhairRun.width/(frames+1))*frameIndex, 0, images.playerHatBowlhairRun.width/(frames+1), images.playerHatBowlhairRun.height, player.x, player.y, images.playerHatBowlhairRun.width/(frames+1)*player.scale, images.playerHatBowlhairRun.height*player.scale);
                 }
             
 
