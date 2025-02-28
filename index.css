@@ -13,3 +13,9 @@ canvas {
     image-rendering: crisp-edges;
 
 }
+
+#debugWindow {
+    background-color: black;
+    position: fixed;
+    color: white;
+}
