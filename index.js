@@ -116,6 +116,8 @@ function draw(){
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+
+
     player.draw();
 
 
@@ -149,9 +151,9 @@ kd.W.down(()=>{
     player.up = true;
 
     if(player.facing == "right"){
-        player.currentAnim = "walk";
+        player.animate("walk")
     } else{
-        player.currentAnim = "l_walk";
+        player.animate("l_walk")
     }
 
     if(player.y-player.hitbox.y> 0){
@@ -165,9 +167,9 @@ kd.W.up(()=>{
     player.up = false;
 
     if(player.facing == "right"){
-        player.currentAnim = "idle";
+        player.animate("idle")
     } else{
-        player.currentAnim = "l_idle";
+        player.animate("l_idle")
     }
 
     
@@ -178,12 +180,12 @@ kd.W.up(()=>{
 kd.S.down(()=>{
 
     player.down = true;
-    player.currentAnim = "walk";
+    player.animate("walk")
 
     if(player.facing == "right"){
-        player.currentAnim = "walk";
+        player.animate("walk")
     } else{
-        player.currentAnim = "l_walk";
+        player.animate("l_walk")
     }
 
     if(player.y+player.hitbox.height < canvas.height){
@@ -196,9 +198,9 @@ kd.S.up(()=>{
     player.down = false;
 
     if(player.facing == "right"){
-        player.currentAnim = "idle";
+        player.animate("idle")
     } else{
-        player.currentAnim = "l_idle";
+        player.animate("l_idle")
     }
     
 })
@@ -206,7 +208,7 @@ kd.S.up(()=>{
 kd.A.down(()=>{
 
     player.left = true;
-    player.currentAnim = "l_walk";
+    player.animate("l_walk")
     player.facing = "left";
 
     if(player.x-player.hitbox.x> 0){
@@ -217,14 +219,14 @@ kd.A.down(()=>{
 kd.A.up(()=>{
 
     player.left = false;
-    player.currentAnim = "l_idle";
+    player.animate("l_idle")
     
 })
 
 kd.D.down(()=>{
 
     player.right = true;
-    player.currentAnim = "walk";
+    player.animate("walk")
     player.facing = "right";
 
     if(player.x+player.hitbox.width < canvas.width){
@@ -235,13 +237,13 @@ kd.D.down(()=>{
 kd.D.up(()=>{
 
     player.right = false;
-    player.currentAnim = "idle";
+    player.animate("idle")
     
 })
 
 kd.SPACE.down(()=>{
     
-    player.currentAnim = "jump";
+    player.animate("jump");
 
     
 })
@@ -317,19 +319,29 @@ class Player {
         this.width = images.player.idle_base.width * this.scale / this.animations[this.currentAnim].totalFrames;
         this.height = images.player.idle_base.height * this.scale;
 
+        this.animate = (animation) => {
+
+
+            if((this.animFrame+1) >= this.animations[this.currentAnim].frames){
+                this.animFrame = 0;
+            }
+            
+            this.currentAnim = animation;
+
+        }
+
         this.draw = (currentAnim = this.currentAnim) => {
         
-            
-            console.log(this.animFrame)
+            //console.log("AnimFrame: ", this.animFrame+1)
+            //console.log(this.animations[this.currentAnim].totalFrames, !this.animations[this.currentAnim].isLoop)
+
 
             this.animAccumulator += deltaTime;
             while (this.animAccumulator >= this.animations[this.currentAnim].interval) {
                 this.animAccumulator -= this.animations[this.currentAnim].interval;
                 this.animFrame++;
                 if (this.animFrame >= this.animations[this.currentAnim].totalFrames) {
-                    if(this.animations[this.currentAnim].isLoop){
-                        this.animFrame = 0;
-                    }
+                    this.animFrame = 0;
                 }
             }            
 
@@ -341,53 +353,28 @@ class Player {
             switch(currentAnim){
                 case "idle":
 
-                    if (this.animFrame >= this.animations[this.currentAnim].totalFrames) {
-                        if(this.animations[this.currentAnim].isLoop){
-                            this.animFrame = 0;
-                        }
-                    }
-
                     ctx.drawImage(images.player.idle_base, images.player.idle_base.width / this.animations[this.currentAnim].totalFrames * this.animFrame, 0, images.player.idle_base.width / this.animations[this.currentAnim].totalFrames, images.player.idle_base.height, this.x-(images.player.idle_base.width*this.scale/this.animations[this.currentAnim].totalFrames/2), this.y-(images.player.idle_base.height*this.scale/2), images.player.idle_base.width / this.animations[this.currentAnim].totalFrames * this.scale, images.player.idle_base.height * this.scale);
+                    
                     break;
                 case "l_idle":
 
-                    if (this.animFrame >= this.animations[this.currentAnim].totalFrames) {
-                        if(this.animations[this.currentAnim].isLoop){
-                            this.animFrame = 0;
-                        }
-                    }
-
                     ctx.drawImage(images.player.l_idle_base, images.player.l_idle_base.width / this.animations[this.currentAnim].totalFrames * this.animFrame, 0, images.player.l_idle_base.width / this.animations[this.currentAnim].totalFrames, images.player.l_idle_base.height, this.x-(images.player.l_idle_base.width*this.scale/this.animations[this.currentAnim].totalFrames/2), this.y-(images.player.l_idle_base.height*this.scale/2), images.player.l_idle_base.width / this.animations[this.currentAnim].totalFrames * this.scale, images.player.l_idle_base.height * this.scale);
+                    
                     break;
                 case "walk":
 
-                    if (this.animFrame >= this.animations[this.currentAnim].totalFrames) {
-                        if(this.animations[this.currentAnim].isLoop){
-                            this.animFrame = 0;
-                        }
-                    }
-
                     ctx.drawImage(images.player.walk_base, images.player.walk_base.width / this.animations[this.currentAnim].totalFrames * this.animFrame, 0, images.player.walk_base.width / this.animations[this.currentAnim].totalFrames, images.player.walk_base.height, this.x-(images.player.walk_base.width*this.scale/this.animations[this.currentAnim].totalFrames/2), this.y-(images.player.walk_base.height*this.scale/2), images.player.walk_base.width / this.animations[this.currentAnim].totalFrames * this.scale, images.player.walk_base.height * this.scale);
+                    
                     break;
                 case "l_walk":
 
-                    if (this.animFrame >= this.animations[this.currentAnim].totalFrames) {
-                        if(this.animations[this.currentAnim].isLoop){
-                            this.animFrame = 0;
-                        }
-                    }
-
                     ctx.drawImage(images.player.l_walk_base, images.player.l_walk_base.width / this.animations[this.currentAnim].totalFrames * this.animFrame, 0, images.player.l_walk_base.width / this.animations[this.currentAnim].totalFrames, images.player.l_walk_base.height, this.x-(images.player.l_walk_base.width*this.scale/this.animations[this.currentAnim].totalFrames/2), this.y-(images.player.l_walk_base.height*this.scale/2), images.player.l_walk_base.width / this.animations[this.currentAnim].totalFrames * this.scale, images.player.l_walk_base.height * this.scale);
+                    
                     break;
                 case "jump":
 
-                    if (this.animFrame >= this.animations[this.currentAnim].totalFrames) {
-                        if(this.animations[this.currentAnim].isLoop){
-                            this.animFrame = 0;
-                        }
-                    }
-
                     ctx.drawImage(images.player.jump_base, images.player.jump_base.width / this.animations[this.currentAnim].totalFrames * this.animFrame, 0, images.player.jump_base.width / this.animations[this.currentAnim].totalFrames, images.player.jump_base.height, this.x-(images.player.jump_base.width*this.scale/this.animations[this.currentAnim].totalFrames/2), this.y-(images.player.jump_base.height*this.scale/2), images.player.jump_base.width / this.animations[this.currentAnim].totalFrames * this.scale, images.player.jump_base.height * this.scale);
+
                     break;
                 
             }
